@@ -268,8 +268,8 @@
 </div>
 
 <script>
-    // Google Sheets Script URL (sozlangan)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnUbdSQKAIzJuwni70cUKBdlDFrHJNxaW_UBhd6QUHjJ2L02Om2P0tQctAqDVR4OIT/exec';
+    // Google Sheets Script URL (SIZNING SOZLANGAN URL)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCs39FKFm7099TSmFppgEnj-9QbcpBb8k8q88VqUpVOY62Qqye8Bn7lAxISsDp2cb/exec';
     
     const TESTS = [
         { text: "x + 5 = 12 bo‘lsa, x ni toping.", options: ["5", "7", "12", "17"], correct: 1 },
@@ -320,8 +320,7 @@
         };
         
         try {
-            // mode: 'no-cors' bilan yuboramiz
-            await fetch(SCRIPT_URL, {
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
